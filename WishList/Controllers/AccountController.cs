@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,8 +13,8 @@ namespace WishList.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
-            this._userManager = userManager;
-            this._signInManager = signInManager;
+            _userManager = userManager;
+            _signInManager = signInManager;
 
         }
 
@@ -23,23 +22,18 @@ namespace WishList.Controllers
         [AllowAnonymous]
         public IActionResult Register()
         {
-            return View("Register");
+            return View();
         }
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
+        public IActionResult Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
                 return View("Register");
 
-            var user = new ApplicationUser
-            {
-                UserName = registerViewModel.Email,
-                Email = registerViewModel.Email
-            };
+            var result = _userManager.CreateAsync(new ApplicationUser() { Email = model.Email, UserName = model.Email }, model.Password).Result;
 
-            var result = await _userManager.CreateAsync(user, registerViewModel.Password);
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
@@ -47,10 +41,10 @@ namespace WishList.Controllers
                     ModelState.AddModelError("Password", error.Description);
                 }
 
-                return View("Register", registerViewModel);
+                return View(model);
             }
 
-            return RedirectToAction("HomeController.Index");
+            return RedirectToAction("Index", "Home");
         }
 
     }
