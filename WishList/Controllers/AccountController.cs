@@ -67,7 +67,7 @@ namespace WishList.Controllers
             if (!result.Succeeded)
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Item");
         }
 
         [HttpPost]
